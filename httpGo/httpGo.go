@@ -3,10 +3,12 @@ package main
 import (
 	"fmt"
 	"github.com/labstack/echo"
-	"net/http"
-
 	_ "github.com/mattn/go-sqlite3"
+	memorycache "httpGo/cache"
 	"httpGo/dbmethods"
+	"net/http"
+	"os"
+	"time"
 )
 
 func main() {
@@ -89,7 +91,43 @@ func main() {
 
 	s1, _ := db.GetItem("Shoes", "Vans")
 	fmt.Println(s1)
-	s2, _ := db.GetInfo("Enjoy")
+	s2 := ""
+	fmt.Println("Работать ли с cache?\n да - введите 1\n нет - введите 0")
+	var check int
+	fmt.Fscan(os.Stdin, &check)
+	if check == 1 {
+		fmt.Println("Сохраним в кеше информацию о компании с бд. Время жизни контейнера одна минута, как и нашей записи.")
+		cache := memorycache.New(time.Minute, 10*time.Minute)
+		str, _ := db.GetInfo("Enjoy")
+		cache.Set("myKey", str, time.Minute)
+		fmt.Println("Хотим вывести информацию о компании?\n да - введите 1\n нет - введите 0")
+		fmt.Fscan(os.Stdin, &check)
+		if check == 1 {
+			i, b := cache.Get("myKey")
+			fmt.Printf("%s %s", "Информация существует?", b)
+			fmt.Printf("%s %s", "Информация: ", i)
+		} else {
+			fmt.Println("Хотим удалить из кеша или подождать пока закончиться время жизни?\n Удалить - 1\n Ждать - 0")
+			fmt.Fscan(os.Stdin, &check)
+			if check == 0 {
+				fmt.Println("Подождем минуту, чтобы отчистился кэш")
+				time.Sleep(time.Minute)
+				i, b := cache.Get("myKey")
+				fmt.Printf("%s %s", "Информация существует?", b)
+				fmt.Printf("%s %s", "Информация: ", i)
+				fmt.Println("\nПроверим действительно ли у объекта закончилось время жизни\nвыведем массив ключей у которых закончилось время")
+				fmt.Println(cache.ExpiredKeys())
+			} else if check == 1 {
+				cache.Delete("myKey")
+				i, b := cache.Get("myKey")
+				fmt.Printf("%s %s", "Информация существует?", b)
+				fmt.Printf("%s %s", "Информация: ", i)
+				fmt.Println("\nПроверим действительно ли удалили то что хранилось в кеше под нашим ключем или у объекта закончилось время жизни\nвыведем массив ключей у которых закончилось время")
+				fmt.Println(cache.ExpiredKeys())
+			}
+		}
+	}
+	s2, _ = db.GetInfo("Enjoy")
 	//db.ShowAll()
 	//all methods checked
 
