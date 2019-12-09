@@ -18,15 +18,12 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	rows, err := db.Query("SELECT * FROM products")
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	defer rows.Close()
 	prdct := make([]*ProductsInfo.Product, 0)
-
 	for rows.Next() {
 		p := new(ProductsInfo.Product)
 		err := rows.Scan(&p.Id, &p.Item, &p.Company, &p.Price, &p.Amount)
@@ -41,12 +38,10 @@ func main() {
 	for _, p := range prdct {
 		fmt.Printf("%s %d\n %s %s\n %s %s\n %s %d\n %s %d\n\n","item id:", p.Id, "item:",  p.Item, "company:", p.Company, "price(BLR):", p.Price, "amount:", p.Amount)
 	}
-
 	rows, err = db.Query("SELECT * FROM info")
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	defer rows.Close()
 	info := make([]*ProductsInfo.Info, 0)
 	for rows.Next() {
@@ -72,8 +67,8 @@ func main() {
 
 	//adding new products
 	/*tmp := ProductsInfo.Product{}
-	tmp.Item = "Wheels"
-	tmp.Company = "Enjoy"
+	tmp.Item = "Shoes"
+	tmp.Company = "Vans"
 	tmp.Price = 60
 	tmp.Amount = 80
 	err = db.AddItem(&tmp)
@@ -87,8 +82,7 @@ func main() {
 	tmp2.Company = "Enjoy"
 	tmp2.Information = "LULZ LULW"
 	db.AddInfo(&tmp2)
-	*/
-
+*/
 	s1, _ := db.GetItem("Shoes", "Vans")
 	fmt.Println(s1)
 
