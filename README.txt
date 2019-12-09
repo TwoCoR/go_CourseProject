@@ -1,5 +1,3 @@
-Finilly finished remembering all "git things".
-Reuploded everything that i had done (task1 + httpGo) after adding .gitignore
 4)Написать тест/бенчмарк/example +1
 5)Добавить в реализацию вторую реализацию использую map +1
 6)Добавить использования redis cache +1
@@ -9,9 +7,10 @@ Reuploded everything that i had done (task1 + httpGo) after adding .gitignore
 10)Использовать channels +1
 11)Использовать RabbitMQ +2
 12)terraform scripts to aws deployment +10
-checkmate 1) 2) 3) {
+checkmate 1) 2) 3) 6) {
   1)Первое задание + 2
   2)Создать http server  +1
   3)Редактировать как минимум 2 структуры в базе данных (User/Product/ any db table) +1. Если mongo  +2
+  6)Добавить использования redis cache +1
 }
 
