@@ -24,11 +24,11 @@ type dbm struct {
 }
 
 func (d dbm) AddItem(p *ProductsInfo.Product) error {
-	row := d.db.QueryRow("SELECT * FROM Products WHERE item = $1 AND company = $2 AND price = $3 AND amount = $4;", p.Item, p.Company, p.Price, p.Amount)
+	row := d.db.QueryRow("SELECT * FROM products WHERE item = $1 AND company = $2 AND price = $3 AND amount = $4;", p.Item, p.Company, p.Price, p.Amount)
 	prod := ProductsInfo.Product{}
 	err := row.Scan(&prod.Id, &prod.Item, &prod.Company, &prod.Price, &prod.Amount)
 	if count == 0 || err == sql.ErrNoRows {
-		_, err := d.db.Exec("INSERT INTO Products (item, company, price, amount) VALUES ($1, $2, $3, $4);", p.Item, p.Company, p.Price, p.Amount)
+		_, err := d.db.Exec("INSERT INTO products (item, company, price, amount) VALUES ($1, $2, $3, $4);", p.Item, p.Company, p.Price, p.Amount)
 		count++
 		return err
 	}
@@ -38,7 +38,7 @@ func (d dbm) AddItem(p *ProductsInfo.Product) error {
 }
 
 func (d dbm) GetItem(item string, company string) ([]ProductsInfo.Product, error) {
-	rows, err := d.db.Query("SELECT * FROM Products WHERE item = $1 AND company = $2;", item, company)
+	rows, err := d.db.Query("SELECT * FROM products WHERE item = $1 AND company = $2;", item, company)
 	defer rows.Close()
 	if err != nil {
 		log.Fatal(err)
