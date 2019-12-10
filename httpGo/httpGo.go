@@ -1,17 +1,21 @@
 package main
 
 import (
+	"encoding/base64"
 	"fmt"
 	"github.com/labstack/echo"
+	"github.com/labstack/gommon/log"
 	_ "github.com/mattn/go-sqlite3"
 	memorycache "httpGo/cache"
 	"httpGo/dbmethods"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 )
 
 func main() {
+
 
 	//standart db actions
 	/*db, err := sql.Open("sqlite3", "skateshop.db")
@@ -134,4 +138,60 @@ func main() {
 		return c.String(http.StatusOK, "Hello, world!\n"+s2)
 	})
 	e.Logger.Fatal(e.Start(":1323")) // http://localhost:1323
+
+	handler := http.NewServeMux()
+
+	s := &http.Server{
+		Addr:           "localhost:8181",
+		Handler:        handler,          // if nil use default http.DefaultServeMux
+		ReadTimeout:    10 * time.Second, // max duration reading entire request
+		WriteTimeout:   10 * time.Second, // max timing write response
+		IdleTimeout:    15 * time.Second, // max time wait for the next request
+		MaxHeaderBytes: 1 << 20,          // 2^20 or 128kbytes
+	}
+
+	go func() {
+		log.Printf("Listening on http://%s\n", s.Addr)
+		log.Fatal(s.ListenAndServe())
+	}()
+}
+
+func BasicAuth(next http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request){
+
+		auth := strings.SplitN(r.Header.Get("Authorization"), " ", 2)
+
+		//b := len(auth) != 2
+		if  auth[0] != "Basic" {
+			http.Error(w, "authorization failed", http.StatusUnauthorized)
+			return
+		}
+
+		payload, _ := base64.StdEncoding.DecodeString(auth[1])
+		pair := strings.SplitN(string(payload), ":", 2)
+
+		//i := len(pair) != 2
+		if  !validate(pair[0], pair[1]) {
+			http.Error(w, "authorization failed", http.StatusUnauthorized)
+			return
+		}
+
+		next.ServeHTTP(w, r)
+	}
+}
+
+func validate(username, password string) bool {
+	if username == "test" && password == "test" { //Basic dGVzdDp0ZXN0
+		return true
+	}
+	return false
+}
+
+func Logger(next http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request){
+
+		log.Printf("server [net/http] method [%s]  connection from [%v]", r.Method, r.RemoteAddr)
+
+		next.ServeHTTP(w, r)
+	}
 }
