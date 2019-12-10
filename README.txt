@@ -5,7 +5,6 @@
 9)Использовать sync +1
 10)Использовать channels +1
 11)Использовать RabbitMQ +2
-12)JWT authentication +1
 13)Консольное приложение клиент для сервера +1
 14)Взаимодействие между двумя серверами  +2
 15)terraform scripts to aws deployment +10
@@ -14,5 +13,6 @@ checkmate 1) 2) 3) 6) {
   2)Создать http server  +1
   3)Редактировать как минимум 2 структуры в базе данных (User/Product/ any db table) +1. Если mongo  +2
   6)Добавить использования redis cache +1
+  12)JWT authentication +1
 }
 
